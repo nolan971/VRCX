@@ -157,6 +157,33 @@ export default class extends baseClass {
                         time: 0
                     };
                     database.addGamelogJoinLeaveToDatabase(entry);
+                    if (userId && userId !== API.currentUser.id) {
+                        API.getUser({ userId }).then((user) => {
+                            if (user && Array.isArray(user.groups)) {
+                                const targetGroups = [
+                                    { name: 'Foxly', id: 'FOXLY.4338' },
+                                    { name: 'OnlyNekos', id: 'ONLY.7906' },
+                                    { name: "It's Fryday", id: 'FUBUKI.9826' }
+                                ];
+                                for (const group of user.groups) {
+                                    if (
+                                        targetGroups.some(
+                                            (tg) =>
+                                                group.groupId === tg.id ||
+                                                group.name === tg.name
+                                        )
+                                    ) {
+                                        $app.$notify({
+                                            title: 'Groupe détecté',
+                                            message: `${gameLog.displayName} est dans le groupe ${group.name}`,
+                                            type: 'success'
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                    }
                     break;
                 case 'player-left':
                     var ref = this.lastLocation.playerList.get(userId);
